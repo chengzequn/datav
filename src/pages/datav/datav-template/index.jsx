@@ -1,21 +1,74 @@
 import React, { Component } from 'react';
-import { Card,Layout,Icon,Form, Avatar,Menu,Button,Row,Col,Drawer,Popover } from 'antd';
+import { Card,Layout,Icon,Form,Menu,Button,Row,Col } from 'antd';
 const { Header,Content, Sider } = Layout;
 import { Link } from 'umi';
 import router from 'umi/router';
-import styles from './style.less'
+import Module from '../../../components/Module';
+import { query } from '../../../utils/ArrayUtils';
 
-const { SubMenu } = Menu;
 const {Meta}=Card;
 class datavList extends Component {
 
   state = { 
     visible: false,
-    placement: 'left' 
+    placement: 'left',
+    imgSource:[],
+    selectTempKey:'',
   };
+
+  componentWillMount  (){
+
+    const response=[
+      {
+        key:'abcdefghijklmnopqrstuvwxyz123456',
+        url:require('../../../assets/temp.png'),
+        title:'地图',
+        description:'这是一张地图',
+      },
+      {
+        key:'abcdefghijklmnopqrstuvwxyz123457',
+        url:require('../../../assets/temp.png'),
+        title:'图表',
+        description:'这是一张地图',
+      },
+      {
+        key:'abcdefghijklmnopqrstuvwxyz123458',
+        url:require('../../../assets/temp.png'),
+        title:'图表',
+        description:'这是一张图表',
+      }
+    ]
+
+    this.setState({
+      imgSource:response,
+      selectTempKey:response[0].key,
+    })
+  }
 
   toCreateScreen=()=>{
     router.push('/datav/datav-edit')
+  }
+
+  onSelectTemp=(e)=>{
+    this.setState({
+      selectTempKey: e.target.value,
+    });
+    
+  }
+
+  onChangeContent=(array,key)=>{
+    const data=query(array,key);
+    console.log(data)
+    const content=(
+      <Card
+      style={{width:"100%",height:"100%"}}
+        cover={<img style={{width:'90%',height:'100%',margin:'2% 5% 0 5%'}} src={data.url}/>}
+      >
+        <Meta title={data.title} description={data.description}/>
+      </Card>
+     
+    )
+    return content;
   }
 
   render(){
@@ -31,31 +84,12 @@ class datavList extends Component {
             </Header>
             <Layout>
               <Sider>
-                <Menu theme="dark">
-                  <Menu.Item>
-                    <Icon type="fund" />
-                    <span>空白模板1</span>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Icon type="fund" />
-                    <span>空白模板2</span>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Icon type="fund" />
-                    <span>空白模板3</span>
-                  </Menu.Item>
-                </Menu>
+              <Module  dataSources={this.state.imgSource} onChange={this.onSelectTemp} value={this.state.selectTempKey}></Module>
               </Sider>
               <Content>
-                <Card
-                style={{width:"100%",height:"100%"}}
-                  cover={<img src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"/>}
-                >
-                  <Meta title="空白模板" description="你可以随意创作。"/>
-                </Card>
+              {this.onChangeContent(this.state.imgSource,this.state.selectTempKey)}
               </Content>
             </Layout>
-            
         </Layout>
     );
 
