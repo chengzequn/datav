@@ -4,11 +4,11 @@ import styles from "./index.less";
 
 class Module extends Component {
 
-  renderImageNodes=data=>
+  renderImageNodes=(data,onDragEnd)=>
     data.map(item=>{
       return(
-        <Radio value={item.key}  key={item.key}>
-            <img src={item.url} />
+        <Radio value={item.key}  key={item.key} >
+            <img src={item.url}  onDragEnd={onDragEnd}/>
             <div className="content">
             <span className="title">
                 {item.title}
@@ -22,11 +22,11 @@ class Module extends Component {
   })
 
   render() {
-    const {dataSources,onChange,value}=this.props;
+    const {dataSources,onChange,value,onDragEnd}=this.props;
 
     return (
       <Radio.Group onChange={onChange} value={value} className={styles.module}>
-        {this.renderImageNodes(dataSources)}
+        {this.renderImageNodes(dataSources,onDragEnd)}
       </Radio.Group>
     );
   }

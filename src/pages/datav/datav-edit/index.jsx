@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { Card,Layout,Icon,Form,Menu,Button,Row,Col} from 'antd';
 const { Header,Content, Sider } = Layout;
 import { Link } from 'umi';
 import Template from '../../../components/Template';
 import Module from '../../../components/Module';
+import {getBlock} from '../../../components/Block';
 import { query } from '../../../utils/ArrayUtils';
+import { getTimestamp } from '../../../utils/DataUtils';
+// import DatavEdit from './DatavEdit';
+import Configuration from './Configuration';
+import { Line } from '@antv/g2plot';
 
 const {Meta}=Card;
 class datavEdit extends Component {
@@ -14,6 +20,8 @@ class datavEdit extends Component {
     placement: 'left' ,
     imgSource:[],
     selectTempKey:'',
+    content:[],
+
   };
 
   componentWillMount  (){
@@ -95,6 +103,77 @@ class datavEdit extends Component {
     });
   }
 
+  //获取鼠标拖动结束的位置
+  onDragEnd=e=>{
+    let mouseX=e.clientX;
+    let mouseY=e.clientY;
+    console.log("坐标：",mouseX,mouseY)
+    const position=this.getElementPosition();
+    const left=mouseX-position.x;
+    const top=mouseY-position.y;
+    if((mouseX>position.x&&mouseX<(position.x+position.width))
+      &&(mouseY>position.y&&mouseY<(position.y+position.height))
+      ){
+        this.onInitMoudle(left,top);
+    }else{
+      console.log("我要到碗里去~")
+    }
+  }
+
+  //绘制组件
+  onInitMoudle=(left,top)=>{
+    let timestamp=getTimestamp().toString();
+    console.log("timestamp:",timestamp);
+    //创建图表容器(默认大小)
+    const element=<div key={timestamp} id={timestamp} style={{position:'absolute',top:top,left:left,width:'400px',height:'200px'}} > </div>
+    const list=this.state.content;
+    list.push(element);
+    this.setState({
+      content: list
+    })
+    console.log("list",list)
+
+    //等待容器创建完毕
+    setTimeout(() => {
+      //创建并渲图表
+      const linePlot=getBlock(timestamp);
+      linePlot.render();
+    }, 300);
+
+  }
+
+  renderContent = data =>
+  data.map(item => {
+    console.log("item",item)
+    return <div key={item.key} id={item.key} style={item.props.style}/>;
+  });
+
+  onSelectMoudle=(key)=>{
+    //获取类型
+
+    //获取组件
+    
+
+    //增加组件
+
+    //绘制组件
+
+
+
+
+
+
+  }
+
+
+  //获取容器的大小
+  getElementPosition=()=>{
+    const container=document.getElementById('aa');
+    const position=container.getBoundingClientRect();
+    console.log("position",position)
+    return position;
+  }
+
   onChangeModel=(array,key)=>{
     const data=query(array,key);
     console.log("sider",data)
@@ -102,6 +181,7 @@ class datavEdit extends Component {
       <Module  
       dataSources={data.children} 
       // onChange={()=>this.toCreateScreen()} 
+      onDragEnd={this.onDragEnd}
       ></Module>
     )
     return sider;
@@ -129,14 +209,13 @@ class datavEdit extends Component {
               <Sider>
                 {this.onChangeModel(this.state.imgSource,this.state.selectTempKey)}
               </Sider>
-              <Content>
-                <Card
-                style={{width:"100%",height:"100%"}}
-                  cover={<img src=""/>}
-                >
-                  <Meta title="空白模板" description="你可以随意创作。"/>
-                </Card>
+              <Content id="aa" >
+                {/* <DatavEdit  style={{with:'100%',height:'100%'}}></DatavEdit> */}
+                {this.renderContent(this.state.content)}
               </Content>
+              <Sider width={300} style={{background: '#fff' }}>
+                <Configuration></Configuration>
+              </Sider>
             </Layout>
             
         </Layout>

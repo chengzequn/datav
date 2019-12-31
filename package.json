@@ -50,6 +50,7 @@
     "@ant-design/colors": "^3.1.0",
     "@ant-design/pro-layout": "^4.5.16",
     "@antv/data-set": "^0.10.2",
+    "@antv/g2plot": "^0.11.19",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.isequal": "^4.5.5",
     "@types/react-router": "^5.0.2",
