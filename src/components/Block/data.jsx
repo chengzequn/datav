@@ -1,0 +1,3 @@
+const line = {};
+
+export { line };
